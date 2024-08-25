@@ -1868,14 +1868,11 @@ class MaskRCNN(object):
             # [batch, MAX_GT_INSTANCES, (y1, x1, y2, x2)] in image coordinates
             input_gt_boxes = KL.Input(
                 shape=[None, 4], name="input_gt_boxes", dtype=tf.float32)
-		
-	    # Define output_shape based on the output of norm_boxes_graph
-            output_shape = [None, 4]  # Modify based on the actual output shape of norm_boxes_graph
 	
             # Normalize coordinates
             gt_boxes = KL.Lambda(lambda x: norm_boxes_graph(
                 x, K.shape(input_image)[1:3]),
-            	output_shape=output_shape  # Specify the output shape here
+            	output_shape=(None, 4)  # Specify the output shape here
 		)(input_gt_boxes)
             # 3. GT Masks (zero padded)
             # [batch, height, width, MAX_GT_INSTANCES]
