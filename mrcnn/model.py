@@ -2166,10 +2166,15 @@ class MaskRCNN(object):
         for name in loss_names:
             layer = self.keras_model.get_layer(name)
             if layer.output in self.keras_model.losses:
-                continue
-            loss = (
-                tf.reduce_mean(input_tensor=layer.output, keepdims=True)
-                * self.config.LOSS_WEIGHTS.get(name, 1.))
+                continue          
+
+	    # Wrap the TensorFlow reduce_mean operation in a Lambda layer
+            loss = Lambda(lambda x: tf.reduce_mean(x, keepdims=True))(layer.output)
+            
+            # Multiply the loss by the configured weight for this layer
+            loss *= self.config.LOSS_WEIGHTS.get(layer.name, 1.0)
+            
+            # Add the computed loss to the model
             self.keras_model.add_loss(loss)
 
         # Add L2 Regularization
