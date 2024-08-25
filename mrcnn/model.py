@@ -2160,23 +2160,7 @@ class MaskRCNN(object):
         optimizer = keras.optimizers.SGD(
             learning_rate=learning_rate, momentum=momentum,
             clipnorm=self.config.GRADIENT_CLIP_NORM)
-        # Add Losses
-        loss_names = [
-            "rpn_class_loss",  "rpn_bbox_loss",
-            "mrcnn_class_loss", "mrcnn_bbox_loss", "mrcnn_mask_loss"]
-        for name in loss_names:
-            layer = self.keras_model.get_layer(name)
-            if layer.output in self.keras_model.losses:
-                continue   
-	    # Wrap the TensorFlow reduce_mean operation in a Lambda layer
-            loss = Lambda(lambda x: tf.reduce_mean(x, keepdims=True))(layer.output)
-            
-            # Multiply the loss by the configured weight for this layer
-            loss *= self.config.LOSS_WEIGHTS.get(name, 1.0)
-            
-            # Add the computed loss to the model
-            self.keras_model.add_loss(loss)
-
+       
         # Add L2 Regularization
         # Skip gamma and beta weights of batch normalization layers.
         reg_losses = [
