@@ -2150,6 +2150,7 @@ class MaskRCNN(object):
                                 TF_WEIGHTS_PATH_NO_TOP,
                                 cache_subdir='models',
                                 md5_hash='a268eb855778b3df3c7506639542a6af')
+	print(weights_path)
         return weights_path
 
     def compile(self, learning_rate, momentum):
